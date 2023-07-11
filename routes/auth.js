@@ -40,19 +40,19 @@ const { loginValidation } = require('../validation');
 router.post('/login', async (req, res) => {
     //Validate user data
     const { error } = loginValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    if(error) return res.status(400).json({ message: error.details[0].message });
 
     //Check if email exists
-    const user = await User.findOne({email: req.body.email});
-    if(!user) return res.status(400).send('Email or password is wrong');
+    const user = await User.findOne({email: req.body.email, status: 'active'});
+    if(!user) return res.status(400).json({ message: 'Email or password is wrong' });
 
     //Check if password is correct
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if(!validPass) return res.status(400).send('Invalid Password');
+    if(!validPass) return res.status(400).json({ message: 'Invalid Password' });
 
     //Create and assign token
     const token = jwt.sign({_id: user._id, admin: false}, process.env.TOKEN_SECRET);
-    res.header('auth-token', token).send(token);
+    res.header('auth-token', token).send({token, user});
 });
 
 

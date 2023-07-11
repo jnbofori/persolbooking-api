@@ -26,7 +26,7 @@ const bookingSchema = new mongoose.Schema({
   status: {
     type: String,
     default: 'active',
-    enum: ['active', 'deleted']
+    enum: ['active', 'passed', 'deleted']
   },
 }, {
   timestamps: {

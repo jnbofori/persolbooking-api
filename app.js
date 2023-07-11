@@ -23,6 +23,7 @@ const adminFacilitiesRouter = require('./routes/admin/facilities');
 const adminFacilityTypesRouter = require('./routes/admin/facilityTypes');
 
 mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 
 //CONNECT TO DB
 mongoose.connect(
@@ -34,7 +35,7 @@ mongoose.connect(
 
 //USE ROUTES
 app.use('/auth', authRouter);
-app.use('/bookings', bookingsRouter);
+app.use('/booking', bookingsRouter);
 
 app.use('/admin/auth', adminAuthRouter);
 app.use('/admin/employee', adminEmployeesRouter);

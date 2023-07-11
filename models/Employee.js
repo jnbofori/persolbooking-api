@@ -41,7 +41,16 @@ const employeeSchema = new mongoose.Schema({
     required: false,
     ref: 'Admin'
   },
+}, {
+  timestamps: {
+    createdAt: "created",
+    updatedAt: "modified"
+  },
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
+
+employeeSchema.virtual("role").get(() => "employee");
 
 employeeSchema.index({ "$**": "text" });
 

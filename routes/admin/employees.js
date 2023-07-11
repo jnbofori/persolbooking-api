@@ -9,33 +9,33 @@ const { isAdmin } = require('../../verifyStatus');
 
 
 //CREATE NEW EMPLOYEE
-router.post('/new', verify, isAdmin, async (req, res) => {
-  //Validate employee data
-  const { error } = newEmployeeValidation(req.body);
-  if(error) return res.status(400).send(error.details[0].message);
-
-  //Check if email already exists
-  const emailExists = await Employee.findOne({ email: req.body.email });
-  if(emailExists) return res.status(400).send('Email already exists');
-
-  //Hash password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-  //Create a new employee
-  const employee = new Employee({
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    department: req.body.department,
-    password: hashedPassword,
-    createdBy: req.user._id
-  });
+router.post('/', verify, isAdmin, async (req, res) => {
   try {
+    //Validate employee data
+    const { error } = newEmployeeValidation(req.body);
+    if(error) return res.status(400).json({ message: error.details[0].message });
+
+    //Check if email already exists
+    const emailExists = await Employee.findOne({ email: req.body.email });
+    if(emailExists) return res.status(400).json({ message: 'Email already exists' });
+
+    //Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+    //Create a new employee
+    const employee = new Employee({
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      department: req.body.department,
+      password: hashedPassword,
+      createdBy: req.user._id
+    });
     const savedEmployee = await employee.save();
     res.send(savedEmployee);
   }catch (err) {
-      res.status(400).send(err);
+      res.status(400).json({ message: err.message });
   }
 });
 
@@ -45,14 +45,14 @@ router.put('/:employeeId', verify, isAdmin, async (req, res) => {
   try {
     //Validate employee data
     const { error } = employeeValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    if(error) return res.status(400).json({ message: error.details[0].message });
 
     const { employeeId } = req.params
     const { firstname, lastname, email, department } = req.body;
 
     //Check if email already exists
     const emailExists = await Employee.findOne({ email, _id: { $ne: employeeId } });
-    if(emailExists) return res.status(400).send('Email already exists');
+    if(emailExists) return res.status(400).json({ message: 'Email already exists' });
 
     const updateObject = {
       firstname,
@@ -66,7 +66,7 @@ router.put('/:employeeId', verify, isAdmin, async (req, res) => {
     const updated = await Employee.findOneAndUpdate({ _id: employeeId }, updateObject);
     res.send(updated);
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).json({ message: err });
   }
 });
 
@@ -85,7 +85,7 @@ router.get('/', verify, isAdmin, async (req, res) => {
     const employees = await Employee.find(query).sort({ modified: -1 });
     res.send(employees);
   }catch (err) {
-    res.status(400).send(err);
+    res.status(400).json({ message: err.message });
   }
 });
 
@@ -98,7 +98,7 @@ router.get('/:employeeId', verify, isAdmin, async (req, res) => {
 
     res.send(employee);
   }catch (e) {
-    res.status(400).send(e)
+    res.status(400).json({ message: e.message })
   }
 });
 
@@ -114,7 +114,7 @@ router.delete('/:employeeId', verify, isAdmin, async (req, res) =>{
     );
     res.send({ "Response sent": 'Employee deleted successfully'});
   }catch (e) {
-    res.status(400).send(e.message)
+    res.status(400).json({ message: e.message })
   }
 })
 

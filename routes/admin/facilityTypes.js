@@ -19,7 +19,7 @@ router.get('/', verify, isAdmin, async (req, res) => {
     const facilityTypes = await FacilityType.find(query).sort({ modified: -1 });
     res.send(facilityTypes);
   } catch (e) {
-    res.status(400).send(e.message);
+    res.status(400).json({ message: e.message });
   }
 });
 
@@ -29,7 +29,7 @@ router.post('/', verify, isAdmin, async (req, res) => {
   try {
     //Validate data
     const { error } = facilityTypeValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    if(error) return res.status(400).json({ message: error.details[0].message });
 
     const { name, description } = req.body;
     const facilityType = new FacilityType({
@@ -41,7 +41,7 @@ router.post('/', verify, isAdmin, async (req, res) => {
     const saved = await facilityType.save();
     res.send(saved);
   }catch (e) {
-    res.status(400).send(e.message)
+    res.status(400).json({ message: e.message })
   }
 });
 
@@ -66,7 +66,7 @@ router.put('/:facilityTypeId', verify, isAdmin, async (req, res) => {
     res.send(updated);
   }catch (e) {
     console.log(e)
-    res.status(400).send(e.message);
+    res.status(400).json({ message: e.message });
   }
 });
 
@@ -80,7 +80,7 @@ router.get('/:facilityTypeId', verify, isAdmin, async (req, res) => {
 
     res.send(facilityType);
   }catch (e) {
-    res.status(400).send(e.message)
+    res.status(400).json({ message: e.message })
   }
 });
 
@@ -95,7 +95,7 @@ router.delete('/:facilityTypeId', verify, isAdmin, async (req, res) =>{
     );
     res.send({ "Response sent": 'Facility Type deleted successfully'});
   }catch (e) {
-    res.status(400).send(e.message)
+    res.status(400).json({ message: e.message })
   }
 })
 

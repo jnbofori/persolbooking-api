@@ -6,10 +6,10 @@ const Admin = require('./models/Admin');
 const isValidUser = async (req, res, next) => {
     try {
         const user = await Employee.findOne({ _id: req.user._id, status: 'active' });
-        if(!user) return res.status(401).send('Access Denied');
+        if(!user) return res.status(401).json({ message: 'Access Denied' });
         next();
     }catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({ message: e.message });
     }
 };
 
@@ -18,10 +18,10 @@ const isValidUser = async (req, res, next) => {
 let isAdmin = async (req, res, next) => {
     try {
         const admin = await Admin.findOne({_id: req.user._id});
-        if(!admin) return res.status(401).send('Access Denied');
+        if(!admin) return res.status(401).json({ message: 'Access Denied' });
         next();
     }catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({ message: e.message });
     }
 };
 

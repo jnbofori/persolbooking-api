@@ -22,7 +22,11 @@ const adminSchema = new mongoose.Schema({
     max: 1024,
     min: 6
   },
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
+adminSchema.virtual("role").get(() => "admin");
 
 module.exports = mongoose.model('Admin', adminSchema);

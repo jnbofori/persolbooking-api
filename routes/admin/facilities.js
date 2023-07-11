@@ -7,7 +7,7 @@ const { isAdmin } = require('../../verifyStatus');
 const verify = require('../../verifyToken');
 
 //GET ALL FACILITY
-router.get('/', verify, isAdmin, async (req, res) => {
+router.get('/', verify, async (req, res) => {
   try {
     const { search } = req.query;
     const query = { status: 'active' };
@@ -19,7 +19,7 @@ router.get('/', verify, isAdmin, async (req, res) => {
     const facility = await Facility.find(query).sort({ modified: -1 });
     res.send(facility);
   } catch (e) {
-    res.status(400).send(e.message);
+    res.status(400).json({ message: e.message });
   }
 });
 
@@ -29,7 +29,7 @@ router.post('/', verify, isAdmin, async (req, res) => {
   try {
     //Validate data
     const { error } = facilityValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    if(error) return res.status(400).json({ message: error.details[0].message });
 
     const { name, description, facilityType } = req.body;
     const facility = new Facility({
@@ -42,7 +42,7 @@ router.post('/', verify, isAdmin, async (req, res) => {
     const saved = await facility.save();
     res.send(saved);
   }catch (e) {
-    res.status(400).send(e.message)
+    res.status(400).json({ message: e.message })
   }
 });
 
@@ -69,7 +69,7 @@ router.put('/:facilityId', verify, isAdmin, async (req, res) => {
     res.send(updated);
   }catch (e) {
     console.log(e)
-    res.status(400).send(e.message);
+    res.status(400).json({ message: e.message });
   }
 });
 
@@ -83,7 +83,7 @@ router.get('/:facilityId', verify, isAdmin, async (req, res) => {
 
     res.send(facility);
   }catch (e) {
-    res.status(400).send(e.message)
+    res.status(400).json({ message: e.message })
   }
 });
 
@@ -98,7 +98,7 @@ router.delete('/:facilityId', verify, isAdmin, async (req, res) =>{
     );
     res.send({ "Response sent": 'Facility deleted successfully'});
   }catch (e) {
-    res.status(400).send(e.message)
+    res.status(400).json({ message: e.message })
   }
 })
 
