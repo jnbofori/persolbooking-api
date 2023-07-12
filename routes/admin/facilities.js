@@ -1,10 +1,11 @@
 const express = require('express');
 const assert = require('assert');
 const router = express.Router();
-const Facility = require('../../models/Facility');
-const { facilityValidation } = require('../../validation');
-const { isAdmin } = require('../../verifyStatus');
 const verify = require('../../verifyToken');
+const Booking = require('../../models/Booking');
+const Facility = require('../../models/Facility');
+const { isAdmin } = require('../../verifyStatus');
+const { facilityValidation } = require('../../validation');
 
 //GET ALL FACILITY
 router.get('/', verify, async (req, res) => {
@@ -90,7 +91,12 @@ router.get('/:facilityId', verify, isAdmin, async (req, res) => {
 // DELETE A FACILITY
 router.delete('/:facilityId', verify, isAdmin, async (req, res) =>{
   try {
-    await Facility.findOneAndUpdate({_id: req.params.facilityId, status: 'active'},
+    const { facilityId } = req.params;
+
+    const booking = await Booking.exists({facility: facilityId, status: 'active'});
+    if(booking) return res.status(400).json({ message: 'Failed to delete. Facility has active bookings' });
+
+    await Facility.findOneAndUpdate({_id: facilityId, status: 'active'},
       {
         status: 'deleted',
         modifiedBy: req.user._id

@@ -1,6 +1,7 @@
 const express = require('express');
 const assert = require('assert');
 const router = express.Router();
+const Facility = require('../../models/Facility');
 const FacilityType = require('../../models/FacilityType');
 const { facilityTypeValidation } = require('../../validation');
 const { isAdmin } = require('../../verifyStatus');
@@ -87,7 +88,12 @@ router.get('/:facilityTypeId', verify, isAdmin, async (req, res) => {
 // DELETE A FACILITY TYPE
 router.delete('/:facilityTypeId', verify, isAdmin, async (req, res) =>{
   try {
-    await FacilityType.findOneAndUpdate({_id: req.params.facilityTypeId, status: 'active'},
+    const { facilityTypeId } = req.params;
+
+    const facility = await Facility.exists({facilityType: facilityTypeId, status: 'active'});
+    if(facility) return res.status(400).json({ message: 'Failed to delete. Facility type has active facilities' });
+
+    await FacilityType.findOneAndUpdate({_id: facilityTypeId, status: 'active'},
       {
         status: 'deleted',
         modifiedBy: req.user._id
