@@ -29,7 +29,6 @@ router.post('/new', async (req, res) => {
             lastname: req.body.lastname,
             email: req.body.email,
             password: hashedPassword,
-            specialty: req.body.specialty
         });
         const savedAdmin = await admin.save();
         res.send({ admin: savedAdmin._id });

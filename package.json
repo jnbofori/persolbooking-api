@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "create-admin": "eval $(cat ./.env) node scripts/create-admin.js"
   },
   "author": "julian ofori",
   "license": "ISC",
