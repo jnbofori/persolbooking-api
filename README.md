@@ -1,4 +1,4 @@
-# task-management-api
+# persol booking api
 
 ## Project setup
 ```

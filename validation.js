@@ -52,7 +52,7 @@ const facilityTypeValidation =  data => {
 const facilityValidation =  data => {
     const schema = Joi.object({
         name: Joi.string().required(),
-        description: Joi.string().required(),
+        description: Joi.string(),
         facilityType: Joi.string().required(),
     });
     return schema.validate(data);
