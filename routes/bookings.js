@@ -87,6 +87,7 @@ router.put('/:bookingId', verify, async (req, res) => {
     }
 
     const overlappingBooking = await Booking.findOne({
+      _id: { $ne: bookingId },
       status: 'active',
       facility,
       $or: [
